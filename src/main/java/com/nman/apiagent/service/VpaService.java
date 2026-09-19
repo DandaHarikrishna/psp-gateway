@@ -1,68 +1,75 @@
 package com.nman.apiagent.service;
 
-import java.util.UUID;
-
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.nman.apiagent.dto.CreateVpaRequest;
-import com.nman.apiagent.dto.CreateVpaResponse;
-import com.nman.apiagent.entity.Vpa;
-import com.nman.apiagent.repository.LinkedBankAccountRepository;
-import com.nman.apiagent.repository.VpaRepository;
+import com.nman.apiagent.dto.VpaRequest;
+import com.nman.apiagent.dto.VpaResponse;
+import com.nman.apiagent.toupi.UpiResponseProducer;
 
 @Service
 public class VpaService {
 
-	private final LinkedBankAccountRepository bankAccountRepository;
-	private final VpaRepository vpaRepository;
+    private final UpiResponseProducer responseProducer;
 
-	public VpaService(LinkedBankAccountRepository bankAccountRepository, VpaRepository vpaRepository) {
+    public VpaService(
+            UpiResponseProducer responseProducer) {
 
-		this.bankAccountRepository = bankAccountRepository;
-		this.vpaRepository = vpaRepository;
-	}
+        this.responseProducer = responseProducer;
+    }
 
-	@Transactional
-	public CreateVpaResponse createVpa(CreateVpaRequest request) {
+    public void validateVpa(
+            VpaRequest request) {
 
-		// 1. Validate account
+        boolean valid =
+                isValidVpa(request);
 
-		boolean accountExists = bankAccountRepository.existsByAccountId(request.getAccountId());
+        VpaResponse response;
 
-		if (!accountExists) {
-			throw new IllegalArgumentException("Bank account not found: " + request.getAccountId());
-		}
+        if (valid) {
 
-		// 2. Check VPA already exists
+            response =
+                    new VpaResponse(
+                            request.getTransactionId(),
+                            request.getVpa(),
+                            "axisbank",
+                            "SUCCESS",
+                            "00",
+                            "VPA validated successfully"
+                    );
 
-		if (vpaRepository.existsByVpa(request.getVpa())) {
+        } else {
 
-			throw new IllegalArgumentException("VPA already exists: " + request.getVpa());
-		}
+            response =
+                    new VpaResponse(
+                            request.getTransactionId(),
+                            request.getVpa(),
+                            "axisbank",
+                            "FAILURE",
+                            "01",
+                            "VPA validation failed"
+                    );
+        }
 
-		// 3. Generate VPA ID
+        responseProducer.send(response);
+    }
 
-		String vpaId = "VPA-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    private boolean isValidVpa(
+            VpaRequest request) {
 
-		// 4. Create entity
+        /*
+         * Temporary PSP simulation.
+         *
+         * Later replace this with:
+         *
+         * VpaRepository
+         * PostgreSQL
+         */
 
-		Vpa vpa = new Vpa();
-
-		vpa.setVpa(request.getVpa());
-		vpa.setAccountId(request.getAccountId());
-		vpa.setStatus("ACTIVE");
-		vpa.setPrimaryVpa(request.isSetAsPrimary());
-
-		// 5. Save into database
-
-		vpaRepository.save(vpa);
-
-		// 6. Response
-
-		CreateVpaResponse.VpaData data = new CreateVpaResponse.VpaData(vpaId, request.getVpa(), request.getAccountId(),
-				"ACTIVE", request.isSetAsPrimary());
-
-		return new CreateVpaResponse(true, "VPA created successfully", "", data);
-	}
+        return request.getVpa() != null
+                && request.getVpa()
+                          .endsWith("@axisbank")
+                && request.getAccountId() != null
+                && !request.getAccountId()
+                           .isBlank();
+    }
 }
