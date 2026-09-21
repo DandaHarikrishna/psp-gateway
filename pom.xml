@@ -93,6 +93,7 @@
 	</dependencies>
 
 	<build>
+	 <finalName>psp-gateway</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
