@@ -1,132 +1,160 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.1.1</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>com.nman</groupId>
-	<artifactId>api-agent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name />
-	<description />
-	<url />
-	<licenses>
-		<license />
-	</licenses>
-	<developers>
-		<developer />
-	</developers>
-	<scm>
-		<connection />
-		<developerConnection />
-		<tag />
-		<url />
-	</scm>
-	<properties>
-		<java.version>21</java.version>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webmvc</artifactId>
-		</dependency>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+            http://maven.apache.org/POM/4.0.0
+            https://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webmvc-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <modelVersion>4.0.0</modelVersion>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+    <!-- =========================================================
+         Spring Boot
+         ========================================================= -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.1</version>
+        <relativePath/>
+    </parent>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-kafka</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <!-- =========================================================
+         Project Information
+         ========================================================= -->
+    <groupId>com.nman</groupId>
+    <artifactId>psp-gateway</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-resttestclient</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <name>psp-gateway</name>
+    <description>PSP Gateway for UPI transaction processing</description>
 
-		<!-- JAXB API -->
-		<dependency>
-			<groupId>jakarta.xml.bind</groupId>
-			<artifactId>jakarta.xml.bind-api</artifactId>
-			<version>4.0.4</version>
-		</dependency> <!-- JAXB Runtime -->
+    <!-- =========================================================
+         Properties
+         ========================================================= -->
+    <properties>
+        <java.version>21</java.version>
 
-		<dependency>
-			<groupId>org.glassfish.jaxb</groupId>
-			<artifactId>jaxb-runtime</artifactId>
-			<version>4.0.6</version>
-		</dependency>
+        <jaxb-api.version>4.0.4</jaxb-api.version>
+        <jaxb-runtime.version>4.0.6</jaxb-runtime.version>
+        <jaxb-plugin.version>4.0.0</jaxb-plugin.version>
+    </properties>
 
-	</dependencies>
+    <!-- =========================================================
+         Dependencies
+         ========================================================= -->
+    <dependencies>
 
-	<build>
-	 <finalName>psp-gateway</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
+        <!-- REST API / Spring MVC -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxb2-maven-plugin</artifactId>
-				<version>4.0.0</version>
-				<executions>
-					<execution>
-						<id>xsd-to-java</id>
-						<goals>
-							<goal>xjc</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration> <!-- XSD location -->
-					<sources>
-						<source>
-							${project.basedir}/src/main/resources/xsd/CreateVpaRequest.xsd </source>
-					</sources> <!--
-					Generated Java package -->
-					<packageName> com.nman.apiagent.xml.generated </packageName> <!--
-					Generated source directory -->
-					<outputDirectory>
-						${project.build.directory}/generated-sources/jaxb </outputDirectory>
-					<clearOutputDir> true </clearOutputDir>
-				</configuration>
-			</plugin>
+        <!-- Validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
 
-		</plugins>
-	</build>
+        <!-- Kafka -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-kafka</artifactId>
+        </dependency>
+
+        <!-- Spring Security -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <!-- JAXB API -->
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jaxb-api.version}</version>
+        </dependency>
+
+        <!-- JAXB Runtime -->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>${jaxb-runtime.version}</version>
+        </dependency>
+
+        <!-- Development only -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!-- =========================================================
+         Build
+         ========================================================= -->
+    <build>
+
+        <!-- Produces target/psp-gateway.jar -->
+        <finalName>psp-gateway</finalName>
+
+        <plugins>
+
+            <!-- Creates executable Spring Boot JAR -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- Generate JAXB classes from XSD -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>${jaxb-plugin.version}</version>
+
+                <executions>
+                    <execution>
+                        <id>xsd-to-java</id>
+
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+
+                        <configuration>
+
+                            <sources>
+                                <source>
+                                    ${project.basedir}/src/main/resources/xsd/CreateVpaRequest.xsd
+                                </source>
+                            </sources>
+
+                            <packageName>
+                                com.nman.apiagent.xml.generated
+                            </packageName>
+
+                            <outputDirectory>
+                                ${project.build.directory}/generated-sources/jaxb
+                            </outputDirectory>
+
+                            <clearOutputDir>true</clearOutputDir>
+
+                        </configuration>
+
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+
+    </build>
 
 </project>
