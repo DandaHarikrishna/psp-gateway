@@ -28,7 +28,7 @@ pipeline {
 
         stage('Deploy to EC2') {
     steps {
-        sshagent(credentials: ['ec2-ssh-key-hdanda']) {
+        sshagent(credentials: ['ec2-ssh-key']) {
 
             bat '''
             ssh -o StrictHostKeyChecking=no %EC2_USER%@%EC2_HOST% "mkdir -p %APP_DIR%"
