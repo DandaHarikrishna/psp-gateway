@@ -1,6 +1,17 @@
 pipeline {
     agent any
 
+    tools {
+        jdk 'JDK21'
+        maven 'Maven'
+    }
+
+    environment {
+        EC2_USER = 'ec2-user'
+        EC2_HOST = '54.226.136.175'
+        APP_DIR  = '/home/ec2-user/app'
+    }
+
     stages {
 
         stage('Checkout') {
@@ -11,19 +22,23 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'mvn clean package'
+                bat 'mvn clean package -DskipTests'
             }
         }
 
-    }
+        stage('Deploy to EC2') {
+            steps {
+                sshagent(credentials: ['ec2-ssh-key']) {
 
-    post {
-        success {
-            echo 'Spring Boot build SUCCESS'
-        }
+                    bat '''
+                    scp -o StrictHostKeyChecking=no target\\*.jar %EC2_USER%@%EC2_HOST%:%APP_DIR%/app.jar
+                    '''
 
-        failure {
-            echo 'Spring Boot build FAILED'
+                    bat '''
+                    ssh -o StrictHostKeyChecking=no %EC2_USER%@%EC2_HOST% "pkill -f 'java -jar' || true; nohup java -jar %APP_DIR%/app.jar > %APP_DIR%/app.log 2>&1 &"
+                    '''
+                }
+            }
         }
     }
 }
