@@ -29,8 +29,7 @@ pipeline {
         stage('Deploy to EC2') {
     steps {
         sshagent(credentials: ['ec2-ssh-key']) {
-
-            bat '''
+ bat '''
             ssh -o StrictHostKeyChecking=no %EC2_USER%@%EC2_HOST% "mkdir -p %APP_DIR%"
             '''
 
@@ -39,7 +38,7 @@ pipeline {
             '''
 
             bat '''
-            ssh -o StrictHostKeyChecking=no %EC2_USER%@%EC2_HOST% "pkill -f '%APP_DIR%/app.jar' || true; nohup java -jar %APP_DIR%/app.jar > %APP_DIR%/app.log 2>&1 < /dev/null &"
+            ssh -o StrictHostKeyChecking=no %EC2_USER%@%EC2_HOST% "nohup java -jar %APP_DIR%/app.jar > %APP_DIR%/app.log 2>&1 < /dev/null &"
             '''
         }
     }
