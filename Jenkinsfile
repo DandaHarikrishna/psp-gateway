@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         EC2_USER = 'ec2-user'
-        EC2_HOST = 'YOUR_EC2_PUBLIC_IP'
+        EC2_HOST = '54.226.136.175'
         APP_DIR  = '/home/ec2-user/app'
     }
 
